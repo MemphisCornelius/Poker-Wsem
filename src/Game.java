@@ -18,7 +18,7 @@ public class Game {
 
         for (int i = 0; i < players; i++) {
             hands[i] = new Hand(cardsTisch, new Card[]{deck.drawFromDeck(), deck.drawFromDeck()});
-            System.out.println("p" + i + 1 + ": " + hands[i].getValue() + " " + hands[i].toString());
+            System.out.println("p" + (i + 1) + ": " + hands[i].getValue() + " " + hands[i].toString());
         }
         counter++;
         if (deck.getDeckSize() >= 2*players + 5) {
