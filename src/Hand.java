@@ -13,7 +13,13 @@ public class Hand {
         setNewHand(cardsTisch, cardsHand);
     }
 
+    /**
+     * Setzt neue Hand
+     * @param cardsTisch Karten vom Tisch
+     * @param cardsHand Karten vom Spieler
+     */
     public void setNewHand(Card[] cardsTisch, Card[] cardsHand) {
+        //prüft ob spieler 2 und tisch 5 karten hat
         if (cardsTisch.length == 5 && cardsHand.length == 2) {
 
             cards = new ArrayList<>();
@@ -23,14 +29,17 @@ public class Hand {
             werte = new short[cards.size()];
             symbole = new short[cards.size()];
 
+            //speichert symbole und werte getrennt voneinander
             for (int i = 0; i < cards.size(); i++) {
                 this.werte[i] = cards.get(i).getWert();
                 this.symbole[i] = cards.get(i).getSymbol();
             }
 
+            //sotiert die werte und symbole aufsteigend
             Arrays.sort(this.werte);
             Arrays.sort(this.symbole);
 
+            //bestimmt den wert der Hand (und rundet auf 2stellen nach dem komma, wegen eines komischen bugs :D)
             value = (double) Math.round(getRanking() * 100) / 100;
 
         } else {
@@ -39,6 +48,9 @@ public class Hand {
         }
     }
 
+    /**
+     * @return Hand als String
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("H{[h: ");
@@ -53,6 +65,11 @@ public class Hand {
         return sb.toString();
     }
 
+    /**
+     * Bestimmt den Wert der Hand, wobei die einer stelle den handnamen
+     * und die nachkommastelle die highcard
+     * @return wert der Hand
+     */
     private double getRanking() {
 
         if (isRoyaleFlush() >= 9.0) {
@@ -74,29 +91,40 @@ public class Hand {
         } else if (isPair() > 1.0) {
             return isPair();
         } else {
-            return werte[cards.size() - 1] * 0.01;
+            return werte[cards.size() - 1] * 0.01 + 0.02;
         }
     }
 
+    /**
+     * @return den wert der Hand
+     */
     public double getValue() {
         return value;
     }
 
+    /**
+     * @return 1 + highcard, wenn ein paar vorhanden ist
+     */
     private double isPair() {
         double result = 0.00;
         for (int i = 0; i < cards.size() - 1; i++) {
+            //checkt, ob zwei gleiche karten im sortierten werte array gleich sind
             if (werte[i] == werte[i + 1])
                 result = 1.02 + (werte[i] * 0.01);
         }
         return result;
     }
 
+    /**
+     * @return 2 + highcard, wenn zwei paare vorhanden ist
+     */
     private double isTwoPair() {
         int counter = 0;
         double value = 0.00;
         double result = 0.00;
         for (int i = 0; i < cards.size() - 1; i++) {
             if (werte[i] == werte[i + 1]) {
+                //checkt, ob zwei gleiche karten im sortierten werte array gleich sind und zählt counter hoch
                 value = (werte[i] * 0.01);
                 counter++;
             }
@@ -108,32 +136,44 @@ public class Hand {
         return result;
     }
 
+    /**
+     * @return 3 + highcard, wenn ein drilling vorhanden ist
+     */
     private double isThreeOfAKind() {
         double result = 0.00;
         for (int i = 0; i < cards.size() - 2; i++) {
+            //checkt, ob zwei gleiche karten mit einer karte dazwischen im sortierten werte array gleich sind
             if (werte[i] == werte[i + 2])
                 result = 3.02 + (werte[i] * 0.01);
         }
         return result;
     }
 
+    /**
+     * @return 4 + highcard, wenn eine straße vorhanden ist
+     */
     private double isStraight() {
         double result = 0.00;
         int counter = 0;
 
         for (int i = 0; i < cards.size() - 1; i++) {
+            //schaut, ob nächste karte eins größer als die jetzige ist
             int j = werte[i + 1] - werte[i];
             switch (j) {
                 case 1:
+                    //ist eins größer => counter wird hochgezählt
                     counter++;
                     result = 4.02 + (werte[i + 1] * 0.01);
                     break;
                 case 0:
+                    //sind gleich groß => wird ignoriert
                     break;
                 default:
+                    //weder gleich noch +1 => counter reset
                     counter = 0;
                     break;
             }
+            //checckt, ob 5 karten aufeinander folgen
             if (counter < 4) {
                 result = 0;
             }
@@ -141,15 +181,22 @@ public class Hand {
         return result;
     }
 
+    /**
+     * @return 5 + highcard, wenn ein flush vorhanden ist
+     */
     private double isFlush() {
         double result = 0.00;
         for (int i = 0; i < cards.size() - 5; i++) {
+            //checkt, ob zwei gleiche karten mit drei karten dazwischen im sortierten symbole array gleich sind
             if (symbole[i] == symbole[i + 4])
                 result = 5.02 + (werte[i + 4] * 0.01);
         }
         return result;
     }
 
+    /**
+     * @return 6 + highcard, wenn ein fullHouse vorhanden ist
+     */
     private double isFullHouse() {
         double result = 0.00;
         for (int i = 0; i < cards.size() - 5; i++) {
@@ -160,24 +207,34 @@ public class Hand {
         return result;
     }
 
+    /**
+     * @return 7 + highcard, wenn ein vierling vorhanden ist
+     */
     private double isFourOfAKind() {
         double result = 0.00;
         for (int i = 0; i < cards.size() - 3; i++) {
+            //checkt, ob zwei gleiche karten mit zwei karten dazwischen im sortierten werte array gleich sind
             if (werte[i] == werte[i + 3])
                 result = 7.02 + (werte[i] * 0.01);
         }
         return result;
     }
 
+    /**
+     * @return 8 + highcard, wenn ein straightFlush vorhanden ist
+     */
     private double isStraightFlush() {
         double result = 0.00;
+        //überprüft, ob flush vorhanden
         if (isFlush() >= 5.02) {
             int[] symb = new int[4];
 
+            //zählt die anzahl der verschiedenen symbole
             for (int i : symbole) {
                 symb[i]++;
             }
 
+            //bestimmt das symbol, welches den flush bestimmt
             int flush = -1;
             for (int i = 0; i < symb.length; i++) {
                 if (symb[i] >= 5) {
@@ -191,13 +248,14 @@ public class Hand {
                     flushCards.add(c);
             }
 
+            //bestimmen der werte der flush karten + sotierung nach aufsteigendem wert
             short[] flushWerte = new short[flushCards.size()];
             for (int i = 0; i < flushCards.size(); i++) {
                 flushWerte[i] = flushCards.get(i).getWert();
             }
             Arrays.sort(flushWerte);
 
-
+            //gleiches wie bei der straße, aber nur mit den flush karten
             int counter = 0;
 
             for (int i = 0; i < flushCards.size() - 1; i++) {
@@ -221,7 +279,9 @@ public class Hand {
         }
         return result;
     }
-
+    /**
+     * @return 9.14, wenn ein royaleFlush vorhanden ist
+     */
     private double isRoyaleFlush() {
         double result = 0.00;
         if (isStraightFlush() == 8.13)
