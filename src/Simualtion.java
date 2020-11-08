@@ -1,4 +1,6 @@
-public class Simualtion {
+import java.math.BigInteger;
+
+public class Simualtion{
 
     /**
      * Führt rounds viele Games mit einer bestimmten anzahl von playern und decks pro game aus
@@ -6,14 +8,18 @@ public class Simualtion {
      * @param players anzahl der Spiler, pro Spiel
      * @param decks anzahl der Decks pro Spiel
      */
-    Simualtion(int rounds, int players, int decks) {
+    Simualtion(BigInteger rounds, int players, int decks) {
 
-        if (rounds > 0 && players > 0 && decks > 0) {
-            for (int i = 1; i <= rounds; i++) {
-                System.out.println("Game " + i + ":");
-                new Game(players, decks);
-                System.out.println("\n\n");
-            }
+        if (rounds.compareTo(BigInteger.ZERO) != 0 && players > 0 && decks > 0) {
+
+            do {
+                rounds = rounds.subtract(BigInteger.ONE);
+                System.out.println(rounds.toString());
+                Game g = new Game(players, decks);
+
+                //System.out.println("\n\n");
+
+            }while (rounds.compareTo(BigInteger.ZERO) != 0);
         }
     }
 }

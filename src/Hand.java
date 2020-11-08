@@ -72,8 +72,8 @@ public class Hand {
      */
     private double getRanking() {
 
-        if (isRoyaleFlush() >= 9.0) {
-            return isStraightFlush();
+        if (isRoyaleFlush() > 9.0) {
+            return isRoyaleFlush();
         } else if (isStraightFlush() > 8.0) {
             return isStraightFlush();
         } else if (isFourOfAKind() > 7.0) {
@@ -275,7 +275,6 @@ public class Hand {
                     result = 0;
                 }
             }
-
         }
         return result;
     }
@@ -284,8 +283,10 @@ public class Hand {
      */
     private double isRoyaleFlush() {
         double result = 0.00;
-        if (isStraightFlush() == 8.13)
+        double d = isStraightFlush();
+        if (d > 8.13) {
             result = 9.14;
+        }
         return result;
     }
 }

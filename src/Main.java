@@ -1,6 +1,5 @@
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -8,16 +7,21 @@ public class Main {
 
 
     public static void main(String[] args) {
-
-        try {
-            //setzt den output von System.out auf output.txt
-            PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
-            System.setOut(out);
-        } catch (FileNotFoundException e) { e.printStackTrace(); }
+        String[] handStrings = {
+            "High Card: ", "Pair: ", "Two Pair: ", "Three of a kind: ", "Straight: ",
+            "Flush: ", "Full House: ", "Four of a kind: ", "Straight Flush: ", "Royal Flush: "
+        };
+        BigInteger[] distribution;
 
         //bestimmung, wie lange die simulation dauert
         LocalDateTime start = LocalDateTime.now();
-        new Simualtion(10,2,10);
-        System.out.println(Duration.between(start, LocalDateTime.now()).toMillis() + "ms");
+        new Simualtion(new BigInteger("10000000000"), 1, 1);
+        System.out.println(Duration.between(start, LocalDateTime.now()).toString());
+
+        distribution = Game.distribution;
+
+        for (int i = 0; i < distribution.length; i++) {
+            System.out.println(handStrings[i] + distribution[i]);
+        }
     }
 }
